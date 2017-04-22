@@ -3,43 +3,56 @@ $fn=100;
 main();
 
 module main() {
-    angle = 10;
-    length = 12;
-    height = 12;
+    angle = 5;
+    length = 10;
+    height = 15;
     thickness = 1.5;
-    grip_width = 8;
+    grip_width = 9;
     compartment_width = 14;
+    compartment_back = 9;
+    bar_length = 0.9;
 
     difference() {
-        translate([length, (grip_width - compartment_width) / 2, 0])
-        rotate([0, -10, 0])
-            camera_compartment(
-                length=4,
-                width=compartment_width,
+        union() {
+            difference() {
+                translate([length - thickness, (grip_width - compartment_width) / 2, 0])
+                rotate([0, -angle, 0])
+                    camera_compartment(
+                        length=4,
+                        width=compartment_width,
+                        height=height,
+                        grip_width=compartment_back,
+                        thickness=thickness,
+                        bottom_height=2,
+                        sensor_width=8.2,
+                        sensor_y_offset=2,
+                        left_lip_length=1.5,
+                        left_lip_width=2
+                    );
+
+                translate([0, -25, height])
+                    cube(size=[50, 50, 50]);
+
+                translate([0, -25, -height])
+                    cube(size=[50, 50, height]);
+
+                translate([length + 5.4, -25, -1])
+                    cube(size=[5, 50, 50]);
+            }
+
+            grip(
+                length=length,
+                width=grip_width,
                 height=height,
                 thickness=thickness,
-                bottom_height=2,
-                sensor_width=8,
-                sensor_y_offset=2,
-                left_lip_length=1,
-                left_lip_width=1.5
+                mount_width=compartment_back,
+                bar_length=bar_length,
+                bar_height=4.9,
+                slit_length=0.4,
+                angle=angle
             );
-
-        translate([0, -25, height])
-            cube(size=[50, 50, 50]);
+        }
     }
-
-    grip(
-        length=length,
-        width=8,
-        height=height,
-        thickness=thickness,
-        mount_width=14,
-        bar_length=1,
-        bar_height=4.6,
-        slit_length=0.5,
-        angle=angle
-    );
 }
 
 module grip(length, width, height, thickness, mount_width, bar_length, bar_width, bar_height, slit_length, angle) {
@@ -61,7 +74,7 @@ module grip(length, width, height, thickness, mount_width, bar_length, bar_width
 
                 translate([length - thickness, (width - mount_width) / 2, 0])
                 difference() {
-                    rotate([0, -10, 0])
+                    rotate([0, -angle, 0])
                     translate([0, 0, -5])
                         cube(size=[thickness, mount_width, height + 10]);
 
@@ -75,32 +88,57 @@ module grip(length, width, height, thickness, mount_width, bar_length, bar_width
         }
 
         hull() {
-            translate([thickness * 2 + bar_length + 1, width - thickness, -1])
+            translate([thickness * 1.5 + bar_length + 1, width - thickness * 1.2, -1])
                 cylinder(h=height + 2, r=1);
 
-            translate([thickness * 2 + bar_length + 1, thickness, -1])
+            translate([thickness * 1.5 + bar_length + 1, thickness * 1.2, -1])
                 cylinder(h=height + 2, r=1);
 
-            translate([thickness * 2 + bar_length + 4, width, -1])
+            translate([length - thickness * 2, width - thickness * 1.2, -1])
                 cylinder(h=height + 2, r=1);
 
-            translate([thickness * 2 + bar_length + 4, 0, -1])
+            translate([length - thickness * 2, thickness * 1.2, -1])
                 cylinder(h=height + 2, r=1);
         }
+
+        translate([thickness * 2 + bar_length, -1, height])
+        rotate([0, 35, 0])
+            cube(size=[height, width + 2, 50]);
+
+        // hull() {
+        //     translate([length, width / 2, height / 3])
+        //     rotate([0, 90, 0])
+        //         cylinder(h=thickness * 4, r=mount_width / 5, center=true);
+
+        //     translate([length, width / 2, height])
+        //     rotate([0, 90, 0])
+        //         cylinder(h=thickness * 4, r=mount_width / 5, center=true);
+        // }
     }
 }
 
-module camera_compartment(length, width, height, thickness, sensor_width, sensor_y_offset, left_lip_length, left_lip_width) {
+module camera_compartment(length, width, height, grip_width, thickness, bottom_height, sensor_width, sensor_y_offset, left_lip_length, left_lip_width) {
     difference() {
-        cube(size=[length + thickness * 2, width, height + bottom_height]);
+        translate([0, 0, -bottom_height]) {
+            hull() {
+                translate([length + thickness, 0, 0])
+                    cube(size=[thickness, width, height + bottom_height + thickness]);
 
-        translate([-1, -1, bottom_height])
+                translate([0, (width - grip_width) / 2, 0])
+                    cube(size=[thickness, grip_width, height + bottom_height + thickness]);
+            }
+        }
+
+        translate([-1, -1 - left_lip_width, bottom_height])
+            cube(size=[length + thickness + 1, width + 1, height + 1]);
+
+        translate([-thickness - left_lip_length, -1, bottom_height])
             cube(size=[length + thickness + 1, width + 2, height + 1]);
 
         translate([length + thickness - 1, (width - sensor_width) / 2, bottom_height + sensor_y_offset])
             cube(size=[thickness + 2, sensor_width, height]);
     }
 
-    translate([length + thickness - left_lip_length, width - left_lip_width, 0])
-        cube(size=[left_lip_length, left_lip_width, height + bottom_height]);
+    // translate([length + thickness - left_lip_length, width - left_lip_width, 0])
+    //     cube(size=[left_lip_length, left_lip_width, height + thickness]);
 }
