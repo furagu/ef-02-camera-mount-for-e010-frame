@@ -4,12 +4,12 @@ main();
 
 module main() {
     angle = 5;
-    length = 5;
-    height = 18.5;
-    thickness = 1.2;
+    length = 4.5;
+    height = 17.5;
+    thickness = 1.1;
     grip_width = 10;
     compartment_width = 13;
-    compartment_back = 9;
+    compartment_back = 8;
     bar_length = 0.75;
     bar_height = 4.9;
 
@@ -24,10 +24,10 @@ module main() {
                         height=height,
                         grip_width=compartment_back,
                         thickness=thickness,
-                        bottom_height=2,
+                        bottom_height=1,
                         sensor_width=8.1,
                         sensor_y_offset=2,
-                        left_lip_length=1,
+                        left_lip_length=1.2,
                         left_lip_width=1.2
                     );
 
@@ -36,10 +36,6 @@ module main() {
 
                 translate([0, -25, -height])
                     cube(size=[50, 50, height]);
-
-                translate([length + 3.6, -25, -1])
-                rotate([0, 30, 0])
-                    cube(size=[5, 50, 50]);
             }
 
             grip(
@@ -74,11 +70,26 @@ module grip(length, width, height, thickness, mount_width, bar_length, bar_width
                     cube(size=[thickness + slit_length + 1, width + 2, height - bar_height - thickness + 2]);
             }
 
-            hull() {
-                translate([thickness + bar_length, 0, height - bar_height - thickness * 2])
-                    cube(size=[thickness, width, bar_height + thickness * 2]);
+            translate([thickness + bar_length, 0, height - bar_height - thickness * 3])
+            difference() {
+                cube(size=[thickness, width, bar_height + thickness * 3]);
 
-                translate([length - thickness, (width - mount_width) / 2, 0])
+                cut_size = sqrt(pow(thickness, 2) * 2);
+
+                translate([0, -1, -thickness])
+                rotate([0, -45, 0])
+                    cube(size=[cut_size, width + 2, cut_size]);
+
+                translate([0, 0, -thickness])
+                rotate([45, 0, 0])
+                    cube(size=[thickness + 1, cut_size, cut_size]);
+
+                translate([0, width, -thickness])
+                rotate([45, 0, 0])
+                    cube(size=[thickness + 1, cut_size, cut_size]);
+            }
+
+            translate([length - thickness, (width - mount_width) / 2, 0])
                 difference() {
                     rotate([0, -angle, 0])
                     translate([0, 0, -5])
@@ -90,7 +101,6 @@ module grip(length, width, height, thickness, mount_width, bar_length, bar_width
                      translate([-height, -1, -height])
                         cube(size=[50, 50, height]);
                 }
-            }
         }
 
         translate([thickness * 2 + bar_length, -1, height])
