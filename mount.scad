@@ -6,7 +6,7 @@ module main() {
     angle = 5;
     length = 4.5;
     height = 17.5;
-    thickness = 1.1;
+    thickness = 1.2;
     grip_width = 10;
     compartment_width = 13;
     compartment_back = 8;
@@ -19,15 +19,15 @@ module main() {
                 translate([length - thickness, (grip_width - compartment_width) / 2, 0])
                 rotate([0, -angle, 0])
                     camera_compartment(
-                        length=4,
+                        length=3.5,
                         width=compartment_width,
                         height=height,
                         grip_width=compartment_back,
                         thickness=thickness,
-                        bottom_height=1,
-                        sensor_width=8.1,
+                        bottom_height=1.5,
+                        sensor_width=8,
                         sensor_y_offset=2,
-                        left_lip_length=1.2,
+                        left_lip_length=1.1,
                         left_lip_width=1.2
                     );
 
