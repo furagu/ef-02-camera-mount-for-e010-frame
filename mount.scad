@@ -19,7 +19,7 @@ module main() {
                 translate([length - thickness, (grip_width - compartment_width) / 2, 0])
                 rotate([0, -angle, 0])
                     camera_compartment(
-                        length=3.5,
+                        length=3.9,
                         width=compartment_width,
                         height=height,
                         grip_width=compartment_back,
