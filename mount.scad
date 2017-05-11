@@ -12,6 +12,7 @@ module main() {
     compartment_back = 8;
     bar_length = 0.75;
     bar_height = 4.9;
+    slit_length=0.4;
 
     difference() {
         union() {
@@ -46,7 +47,7 @@ module main() {
                 mount_width=compartment_back,
                 bar_length=bar_length,
                 bar_height=bar_height,
-                slit_length=0.4,
+                slit_length=slit_length,
                 angle=angle
             );
         }
@@ -93,7 +94,13 @@ module grip(length, width, height, thickness, mount_width, bar_length, bar_width
                 difference() {
                     rotate([0, -angle, 0])
                     translate([0, 0, -5])
+                    difference() {
+                        gap_w = mount_width / 2 ;
+
                         cube(size=[thickness, mount_width, height + 10]);
+                        translate([-1, (mount_width - gap_w) / 2, -1])
+                            cube(size=[thickness + 2, gap_w, height + 12]);
+                    }
 
                     translate([-height, -1, height])
                         cube(size=[50, 50, height]);
@@ -113,12 +120,26 @@ module grip(length, width, height, thickness, mount_width, bar_length, bar_width
 module camera_compartment(length, width, height, grip_width, thickness, bottom_height, sensor_width, sensor_y_offset, left_lip_length, left_lip_width) {
     difference() {
         translate([0, 0, -bottom_height]) {
-            hull() {
-                translate([length + thickness, 0, 0])
-                    cube(size=[thickness, width, height + bottom_height + thickness]);
+            difference() {
+                hull() {
+                    translate([length + thickness, 0, 0])
+                        cube(size=[thickness, width, height + bottom_height + thickness]);
 
-                translate([0, (width - grip_width) / 2, 0])
-                    cube(size=[thickness, grip_width, height + bottom_height + thickness]);
+                    translate([0, (width - grip_width) / 2, 0])
+                        cube(size=[thickness, grip_width, height + bottom_height + thickness]);
+                }
+
+                hull() {
+                    back_w = grip_width / 2;
+
+                    translate([-0.1, (width - grip_width + back_w) / 2, 0])
+                        cube(size=[0.1, back_w, height + bottom_height + thickness]);
+
+                    front_w = width / 2;
+
+                    translate([length + thickness - 0.1, (width - front_w) / 2, 0])
+                        cube(size=[0.1, front_w, height + bottom_height + thickness]);
+                }
             }
         }
 
